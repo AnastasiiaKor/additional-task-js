@@ -1,7 +1,21 @@
 h2 {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
-ul, div {
-    margin-bottom: 100px;
+ul,
+div {
+  margin-bottom: 100px;
+  list-style: none;
+}
+img {
+  display: block;
+}
+.product-item {
+  outline: 1px solid black;
+  width: 300px;
+}
+
+.user {
+  outline: 1px solid black;
+  width: 300px;
 }
