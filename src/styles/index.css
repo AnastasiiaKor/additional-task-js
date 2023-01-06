@@ -5,17 +5,42 @@ h2 {
 ul,
 div {
   margin-bottom: 100px;
+}
+ul {
   list-style: none;
+  display: flex;
+  flex-wrap: wrap;
 }
 img {
   display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.image-wrapper {
+  height: 300px;
+  margin-bottom: 20px;
 }
 .product-item {
   outline: 1px solid black;
   width: 300px;
+  padding: 10px;
+  overflow: hidden;
 }
 
-.user {
+.user,
+.carts-item,
+.posts-item,
+#singleProduct {
   outline: 1px solid black;
   width: 300px;
+  padding: 10px;
+}
+button {
+  cursor: pointer;
+}
+.changingPostForm {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
 }
