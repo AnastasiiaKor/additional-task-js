@@ -10,11 +10,7 @@ async function getProduct(id) {
 }
 
 async function addProduct(obj) {
-  const response = await apiInstance("/products/add", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(obj),
-  });
+  const response = await apiInstance.post("/products/add", obj);
   return response.data;
 }
 

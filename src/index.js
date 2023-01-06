@@ -80,7 +80,7 @@ function onAddFormSubmit(event) {
     description,
     price,
   };
-  renderAddedProduct(title, description, price);
+  renderAddedProduct(obj);
 }
 async function renderAddedProduct(title, description, price) {
   try {
@@ -350,13 +350,16 @@ async function onChangeBtnClick(event) {
     changingPostForm.addEventListener("submit", (event) => {
       event.preventDefault();
       changePost(id, obj)
-        .then((post) => console.log(post))
+        .then(
+          ({ title, tags, id }) =>
+            (post.innerHTML = `
+      <h2>Title: ${title}</h2>
+      <p>ID: ${id}</p>
+      <p>Tags: ${tags}</p>
+       <button type="button" data-id = ${id} class="changeBtn">Change the post</button>
+    `)
+        )
         .catch((error) => console.log(error));
     });
   }
 }
-
-// console.dir(event.target);
-// const markup =
-//   '';
-// body.insertAdjacentHTML("beforeend", markup);

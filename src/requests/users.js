@@ -18,14 +18,7 @@ async function getUserPostsById(id) {
   return response.data.posts;
 }
 async function addUser(obj) {
-  const body = JSON.stringify(obj);
-  const config = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body,
-  };
-  console.log(config);
-  const response = await apiInstance.post("users/add", config);
+  const response = await apiInstance.post("users/add", obj);
   return response.data;
 }
 export {
