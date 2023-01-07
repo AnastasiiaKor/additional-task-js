@@ -15,24 +15,25 @@ import {
 } from "./requests/users";
 
 import { findPosts, getAllPosts, changePost } from "./requests/posts";
+import {
+  allProductsMarkup,
+  productMarkup,
+  addedProductMarkup,
+  usersMarkup,
+  userCartsMarkup,
+  userPostsMarkup,
+  newUserMarkup,
+  keywordPostsMarkup,
+  allPostsMarkup,
+  changedPostMarkup,
+} from "./services/markupService";
 //-------------------1-----------------------
 const listOfProducts = document.querySelector("#allProducts");
 
 async function renderProducts() {
   try {
     const products = await getProducts();
-    const markup = products
-      .map(
-        ({ title, thumbnail, brand, description, price }) =>
-          `<li class="product-item">
-          <h2>${title}</h2>
-          <div class="image-wrapper"><img src="${thumbnail}" alt="${title}" loading="lazy" width='300'/></div>
-        <p><b> Brand: ${brand}</b></p>
-          <p>Description: ${description}.</p>
-          <span>Price: ${price}.</span>
-        </li>`
-      )
-      .join(" ");
+    const markup = allProductsMarkup(products);
 
     listOfProducts.insertAdjacentHTML("beforeend", markup);
   } catch (error) {
@@ -55,12 +56,7 @@ async function renderProduct(id) {
   productEl.innerHTML = "";
   try {
     const product = await getProduct(id);
-    const { title, thumbnail, brand, description, price } = product;
-    const markup = `<h2>${title}</h2>
-          <img src="${thumbnail}" alt="${title}" load=lazy width='300'/>
-        <p><b> Brand: ${brand}</b></p>
-          <p>Description: ${description}.</p>
-          <span>Price: ${price}.</span>`;
+    const markup = productMarkup(product);
     productEl.innerHTML = markup;
   } catch (error) {
     console.log(error);
@@ -85,9 +81,7 @@ function onAddFormSubmit(event) {
 async function renderAddedProduct(title, description, price) {
   try {
     const addedProduct = await addProduct(title, description, price);
-    console.log(addedProduct);
-    const markup = `<h2>${addedProduct.title}</h2><span>ID: ${addedProduct.id}.</span><p>Description: ${addedProduct.description}.</p>
-           <span>Price: ${addedProduct.price}.</span>`;
+    const markup = addedProductMarkup(addedProduct);
     newProduct.innerHTML = markup;
   } catch (error) {
     console.log(error);
@@ -120,21 +114,7 @@ const allUsers = document.querySelector("#allUsers");
 async function renderUsers() {
   try {
     const users = await getUsers();
-    const markup = users
-      .map(
-        ({ id, firstName, lastName, age, gender, image, university }) =>
-          ` <li class="user">
-        <div class="image-wrapper">
-        <img src=${image} alt="${id}" loading="lazy" />
-        </div>
-      <h2>${firstName} ${lastName}</h2>
-      <p><b>Id:</b> ${id}</p>
-      <p><b>Gender:</b>  ${gender}</p>
-      <p><b>Age:</b> ${age}</p>
-      <p><b>University:</b> ${university}</p>
-    </li>`
-      )
-      .join("");
+    const markup = usersMarkup(users);
     allUsers.innerHTML = markup;
   } catch (error) {
     console.log(error);
@@ -153,21 +133,7 @@ async function renderFoundUsers(event) {
   try {
     const users = await getUsersByName(name);
     if (users.length) {
-      const markup = users
-        .map(
-          ({ id, firstName, lastName, age, gender, image, university }) =>
-            ` <li class="user">
-        <div class="image-wrapper">
-        <img src=${image} alt="${id}" loading="lazy" />
-        </div>
-      <h2>${firstName} ${lastName}</h2>
-      <p><b>Id:</b> ${id}</p>
-      <p><b>Gender:</b>  ${gender}</p>
-      <p><b>Age:</b> ${age}</p>
-      <p><b>University:</b> ${university}</p>
-    </li>`
-        )
-        .join("");
+      const markup = usersMarkup(users);
       listOfUsers.insertAdjacentHTML("beforeend", markup);
     } else {
       alert(`There is no user with ${name}`);
@@ -189,21 +155,9 @@ async function renderUser(event) {
   try {
     const userCarts = await getUserCartsById(id);
     if (userCarts.length) {
-      const markup = userCarts[0].products
-        .map(
-          ({ id, title, price, quantity, total }) =>
-            `<li class='carts-item'>
-  <p>Id of product: ${id}</p>
-  <p>Name of product: ${title}</p>
-  <p>Price: ${price}</p>
-  <p>Quantity: ${quantity}</p>
-  <p>Quantity: ${total}</p>
-</li>`
-        )
-        .join("");
+      const products = userCarts[0].products;
+      const markup = userCartsMarkup(products);
       carts.innerHTML = markup;
-
-      console.log(markup);
     } else {
       alert(`The cart of user with id-${id} is empty`);
     }
@@ -221,18 +175,8 @@ async function renderPosts(event) {
   const id = userPostsForm.userId.value;
   try {
     const userPosts = await getUserPostsById(id);
-    console.log(userPosts);
     if (userPosts.length) {
-      const markup = userPosts
-        .map(
-          ({ id, title, tags }) =>
-            `<li class="posts-item">
-      <h2>Title: ${title}</h2>
-      <p>ID: ${id}</p>
-      <p>Tags: ${tags}</p>
-    </li>`
-        )
-        .join("");
+      const markup = userPostsMarkup(userPosts);
       posts.insertAdjacentHTML("beforeend", markup);
       console.log(markup);
     } else {
@@ -262,12 +206,7 @@ async function addNewUser(event) {
       addingNewUserForm.email.value
     ) {
       const newUser = await addUser(obj);
-      const markup = `
-      <p><b>Fisrt Name:</b> ${newUser.firstName}</p>
-      <p><b>Last Name:</b>  ${newUser.lastName}</p>
-      <p><b>ID:</b> ${newUser.id}</p>
-      <p><b>Email:</b> ${newUser.email}</p>`;
-      newUserSection.innerHTML = markup;
+      newUserSection.innerHTML = newUserMarkup(newUser);
     } else {
       alert("Please, fill all the fields!");
     }
@@ -286,21 +225,8 @@ async function filterPostsByKeyword(e) {
   const keyword = filteredPostsForm.keyword.value;
   try {
     const posts = await findPosts(keyword);
-    console.log(posts);
     if (posts.length) {
-      console.log(posts);
-      const markup = posts
-        .map(
-          ({ id, title, tags, userId }) =>
-            `<li class="posts-item">
-      <h2>Title: ${title}</h2>
-      <p>ID: ${id}</p>
-      <p>Tags: ${tags}</p>
-      <p>userId: ${userId}</p>
-    </li>`
-        )
-        .join("");
-      filteredPosts.insertAdjacentHTML("beforeend", markup);
+      filteredPosts.insertAdjacentHTML("beforeend", keywordPostsMarkup(posts));
     } else {
       alert("There are no posts with such keyword. Please, try again");
     }
@@ -314,18 +240,7 @@ const obj = {};
 async function renderAllPosts() {
   try {
     const posts = await getAllPosts();
-    const markup = posts
-      .map(
-        ({ id, title, tags }) =>
-          `<li class="posts-item">
-      <h2>Title: ${title}</h2>
-      <p>ID: ${id}</p>
-      <p>Tags: ${tags}</p>
-       <button type="button" data-id = ${id} class="changeBtn">Change the post</button>
-    </li>`
-      )
-      .join("");
-    allPosts.insertAdjacentHTML("beforeend", markup);
+    allPosts.insertAdjacentHTML("beforeend", allPostsMarkup(posts));
     const changeBtn = document.querySelectorAll("#changeBtn");
     allPosts.addEventListener("click", onChangeBtnClick);
   } catch (error) {
@@ -347,19 +262,14 @@ async function onChangeBtnClick(event) {
     changingPostForm.addEventListener("input", (event) => {
       obj[event.target.name] = event.target.value;
     });
-    changingPostForm.addEventListener("submit", (event) => {
+    changingPostForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      changePost(id, obj)
-        .then(
-          ({ title, tags, id }) =>
-            (post.innerHTML = `
-      <h2>Title: ${title}</h2>
-      <p>ID: ${id}</p>
-      <p>Tags: ${tags}</p>
-       <button type="button" data-id = ${id} class="changeBtn">Change the post</button>
-    `)
-        )
-        .catch((error) => console.log(error));
+      try {
+        const changedPost = await changePost(id, obj);
+        post.innerHTML = changedPostMarkup(changedPost);
+      } catch (error) {
+        alert(error.code);
+      }
     });
   }
 }
